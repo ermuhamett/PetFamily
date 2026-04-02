@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
-using PetFamily.Domain.Common.ValueObjects;
 using PetFamily.Domain.Pets;
+using PetFamily.Domain.Shared.ValueObjects;
 
 namespace PetFamily.Domain.Volunteers;
 
