@@ -1,17 +1,12 @@
-﻿namespace PetFamily.Domain.Volunteers
+﻿namespace PetFamily.Domain.Volunteers;
+
+public readonly record struct VolunteerId(Guid Value) : IComparable<VolunteerId>
 {
-    public sealed class VolunteerId : IComparable<VolunteerId>
-    {
-        private VolunteerId(Guid value)
-        {
-            Value = value;
-        }
+    public static VolunteerId NewId() => new(Guid.NewGuid());
+    public static VolunteerId Empty() => new(Guid.Empty);
+    public static VolunteerId Create(Guid value) => new(value);
 
-        public Guid Value { get; }
+    public int CompareTo(VolunteerId other) => Value.CompareTo(other.Value);
 
-        public static VolunteerId NewId() => new(Guid.NewGuid());
-
-        public static VolunteerId Empty() => new(Guid.Empty);
-        public int CompareTo(VolunteerId? other) => Value.CompareTo(other?.Value);
-    }
+    public override string ToString() => Value.ToString();
 }

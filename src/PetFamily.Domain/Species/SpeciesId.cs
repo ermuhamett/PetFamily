@@ -1,18 +1,12 @@
-﻿namespace PetFamily.Domain.Species
+﻿namespace PetFamily.Domain.Species;
+
+public readonly record struct SpeciesId(Guid Value) : IComparable<SpeciesId>
 {
-    public sealed class SpeciesId : IComparable<SpeciesId>
-    {
-        private SpeciesId(Guid value)
-        {
-            Value = value;
-        }
+    public static SpeciesId NewId() => new(Guid.NewGuid());
+    public static SpeciesId Empty() => new(Guid.Empty);
+    public static SpeciesId Create(Guid value) => new(value);
 
-        public Guid Value { get; }
+    public int CompareTo(SpeciesId other) => Value.CompareTo(other.Value);
 
-        public static SpeciesId NewId() => new(Guid.NewGuid());
-
-        public static SpeciesId Empty() => new(Guid.Empty);
-
-        public int CompareTo(SpeciesId? other) => Value.CompareTo(other?.Value);
-    }
+    public override string ToString() => Value.ToString();
 }
