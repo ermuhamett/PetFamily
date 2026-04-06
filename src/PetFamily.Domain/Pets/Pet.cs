@@ -3,7 +3,7 @@ using PetFamily.Domain.Shared.ValueObjects;
 
 namespace PetFamily.Domain.Pets;
 
-public sealed class Pet:Entity<PetId>
+public sealed class Pet : Entity<PetId>
 {
     public string Name { get; private set; }
     public PetBreed Breed { get; private set; }
@@ -18,8 +18,11 @@ public sealed class Pet:Entity<PetId>
     public DateOnly BirthDate { get; private set; }
     public bool IsVaccinated { get; private set; }
     public PetStatus Status { get; private set; }
-    public Requisites Requisites { get; private set; }
-    public DateTime CreatedDate = DateTime.Now;
+    public RequisiteDetails? RequisiteDetails { get; private set; } = new();
+    public DateTime CreatedDate { get; private set; } = DateTime.Now;
+
+    // for EF Core
+    private Pet(PetId id) : base(id) { }
 
     private Pet(
         PetId id, 
@@ -35,8 +38,8 @@ public sealed class Pet:Entity<PetId>
         bool isCastrated,
         DateOnly birthDate, 
         bool isVaccinated, 
-        PetStatus status, 
-        Requisites requisites) : base(id)
+        PetStatus status,
+        RequisiteDetails requisiteDetails) : base(id)
     {
         Name = name;
         Breed = breed;
@@ -51,7 +54,7 @@ public sealed class Pet:Entity<PetId>
         BirthDate = birthDate;
         IsVaccinated = isVaccinated;
         Status = status;
-        Requisites = requisites;
+        RequisiteDetails = requisiteDetails;
     }
 
     public static Result<Pet> Create(
@@ -68,8 +71,8 @@ public sealed class Pet:Entity<PetId>
         bool isCastrated,
         DateOnly birthDate, 
         bool isVaccinated, 
-        PetStatus status, 
-        Requisites requisites)
+        PetStatus status,
+        RequisiteDetails requisiteDetails)
     {
         if (string.IsNullOrWhiteSpace(name)) return Result.Failure<Pet>($"Pet name is not be empty");
         var heightResult = Height.Create(heightValue);
@@ -95,7 +98,7 @@ public sealed class Pet:Entity<PetId>
             birthDate,
             isVaccinated,
             status,
-            requisites);
+            requisiteDetails);
 
         return Result.Success(pet);
     }
