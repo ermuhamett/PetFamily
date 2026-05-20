@@ -1,4 +1,0 @@
-namespace PetFamily.API.Controllers
-{
-
-}
