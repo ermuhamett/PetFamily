@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+using CSharpFunctionalExtensions;
 
 namespace PetFamily.Domain.Shared.ValueObjects;
 
@@ -17,18 +17,18 @@ public sealed class Address : ComparableValueObject
         ApartmentNumber = apartmentNumber;
     }
 
-    public static Result<Address> Create(string city, string street, string? houseNumber, string? apartmentNumber)
+    public static Result<Address, Error> Create(string city, string street, string? houseNumber, string? apartmentNumber)
     {
         if (string.IsNullOrWhiteSpace(city))
-            return Result.Failure<Address>($"{nameof(city)} is not be empty");
+            return Error.Validation("address.city.empty", $"{nameof(city)} is not be empty");
         if (string.IsNullOrWhiteSpace(street))
-            return Result.Failure<Address>($"{nameof(street)} is not be empty");
+            return Error.Validation("address.street.empty", $"{nameof(street)} is not be empty");
         if (string.IsNullOrWhiteSpace(houseNumber))
-            return Result.Failure<Address>($"{nameof(houseNumber)} is not be empty");
-        if(string.IsNullOrWhiteSpace(apartmentNumber))
-            return Result.Failure<Address>($"{nameof(apartmentNumber)} is not be empty");
+            return Error.Validation("address.house_number.empty", $"{nameof(houseNumber)} is not be empty");
+        if (string.IsNullOrWhiteSpace(apartmentNumber))
+            return Error.Validation("address.apartment_number.empty", $"{nameof(apartmentNumber)} is not be empty");
 
-        return Result.Success(new Address(city, street, houseNumber, apartmentNumber));
+        return new Address(city, street, houseNumber, apartmentNumber);
     }
 
     protected override IEnumerable<IComparable> GetComparableEqualityComponents()

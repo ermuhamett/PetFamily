@@ -13,12 +13,12 @@ namespace PetFamily.Domain.Shared.ValueObjects
             Description = description;
         }
 
-        public static Result<Requisites> Create(string name, string description)
+        public static Result<Requisites, Error> Create(string name, string description)
         {
             if (string.IsNullOrWhiteSpace(name))
-                return Result.Failure<Requisites>($"{nameof(name)} is not be empty");
+                return Error.Validation("requisites.name.empty", $"{nameof(name)} is not be empty");
 
-            return Result.Success(new Requisites(name, description));
+            return new Requisites(name, description);
         }
 
         protected override IEnumerable<IComparable> GetComparableEqualityComponents()

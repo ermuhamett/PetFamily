@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using PetFamily.Domain.Pets;
+using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ValueObjects;
 
 namespace PetFamily.Domain.Volunteers;
@@ -8,7 +9,7 @@ public sealed class Volunteer : Entity<VolunteerId>
 {
     private List<Pet> _pets = [];
     public IReadOnlyList<Pet> Pets => _pets;
-    public SocialNetworkDetails? SocialNetworkDetails { get; private set; } = new();
+    public SocialNetworkDetails SocialNetworkDetails { get; private set; } = new();
 
     public string FullName { get; private set; } = default!;
     public string Email { get; private set; } = default!;
@@ -56,34 +57,34 @@ public sealed class Volunteer : Entity<VolunteerId>
         _pets.Add(pet);
     }
 
-    public static Result<Volunteer> Create(
-        VolunteerId volunteerId, 
-        string fullName, 
-        string email, 
-        string description, 
-        string phone, 
+    public static Result<Volunteer, Error> Create(
+        VolunteerId volunteerId,
+        string fullName,
+        string email,
+        string description,
+        string phone,
         int experienceInYears,
         RequisiteDetails requisiteDetails)
     {
         if (string.IsNullOrWhiteSpace(fullName))
-            return Result.Failure<Volunteer>($"{nameof(fullName)} is not be empty");
+            return Error.Validation("volunteer.full_name.empty", $"{nameof(fullName)} is not be empty");
 
         if (string.IsNullOrWhiteSpace(email))
-            return Result.Failure<Volunteer>($"{nameof(email)} is not be empty");
+            return Error.Validation("volunteer.email.empty", $"{nameof(email)} is not be empty");
 
         if (string.IsNullOrWhiteSpace(description))
-            return Result.Failure<Volunteer>($"{nameof(description)} is not be empty");
+            return Error.Validation("volunteer.description.empty", $"{nameof(description)} is not be empty");
 
         if (string.IsNullOrWhiteSpace(phone))
-            return Result.Failure<Volunteer>($"{nameof(phone)} is not be empty");
+            return Error.Validation("volunteer.phone.empty", $"{nameof(phone)} is not be empty");
 
-        return Result.Success(new Volunteer(
+        return new Volunteer(
             volunteerId,
             fullName,
             email,
             description,
             phone,
             experienceInYears,
-            requisiteDetails));
+            requisiteDetails);
     }
 }

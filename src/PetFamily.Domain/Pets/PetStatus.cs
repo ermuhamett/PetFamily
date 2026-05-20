@@ -11,9 +11,9 @@ namespace PetFamily.Domain.Pets
             Value = value;
         }
         
-        public static Result<PetStatus> Create(Status value)
+        public static Result<PetStatus, Shared.Error> Create(Status value)
         {
-            return Result.Success(new PetStatus(value));
+            return new PetStatus(value);
         }
         public enum Status
         {

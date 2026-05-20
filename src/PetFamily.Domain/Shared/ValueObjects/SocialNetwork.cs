@@ -13,15 +13,15 @@ namespace PetFamily.Domain.Shared.ValueObjects
             Title = title;
         }
         
-        public static Result<SocialNetwork> Create(string link, string title)
+        public static Result<SocialNetwork, Error> Create(string link, string title)
         {
-            if(string.IsNullOrWhiteSpace(link))
-                return Result.Failure<SocialNetwork>($"{nameof(Link)} is not be empty");
+            if (string.IsNullOrWhiteSpace(link))
+                return Error.Validation("social_network.link.empty", $"{nameof(Link)} is not be empty");
 
             if (string.IsNullOrWhiteSpace(title))
-                return Result.Failure<SocialNetwork>($"{nameof(title)} is not be empty");
+                return Error.Validation("social_network.title.empty", $"{nameof(title)} is not be empty");
 
-            return Result.Success(new SocialNetwork(link, title));
+            return new SocialNetwork(link, title);
         }
         protected override IEnumerable<IComparable> GetComparableEqualityComponents()
         {

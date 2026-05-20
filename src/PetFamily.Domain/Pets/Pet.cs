@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ValueObjects;
 
 namespace PetFamily.Domain.Pets;
@@ -57,33 +58,35 @@ public sealed class Pet : Entity<PetId>
         RequisiteDetails = requisiteDetails;
     }
 
-    public static Result<Pet> Create(
-        PetId id, 
-        string name, 
-        PetBreed breed, 
-        string description, 
-        string color, 
+    public static Result<Pet, Error> Create(
+        PetId id,
+        string name,
+        PetBreed breed,
+        string description,
+        string color,
         decimal heightValue,
-        decimal weightValue, 
-        string healthInformation, 
-        Address address, 
-        string phone, 
+        decimal weightValue,
+        string healthInformation,
+        Address address,
+        string phone,
         bool isCastrated,
-        DateOnly birthDate, 
-        bool isVaccinated, 
+        DateOnly birthDate,
+        bool isVaccinated,
         PetStatus status,
         RequisiteDetails requisiteDetails)
     {
-        if (string.IsNullOrWhiteSpace(name)) return Result.Failure<Pet>($"Pet name is not be empty");
+        if (string.IsNullOrWhiteSpace(name))
+            return Error.Validation("pet.name.empty", "Pet name is not be empty");
+
         var heightResult = Height.Create(heightValue);
         if (heightResult.IsFailure)
-            return Result.Failure<Pet>(heightResult.Error);
+            return heightResult.Error;
 
         var weightResult = Weight.Create(weightValue);
         if (weightResult.IsFailure)
-            return Result.Failure<Pet>(weightResult.Error);
+            return weightResult.Error;
 
-        var pet = new Pet(
+        return new Pet(
             id,
             name,
             breed,
@@ -99,7 +102,5 @@ public sealed class Pet : Entity<PetId>
             isVaccinated,
             status,
             requisiteDetails);
-
-        return Result.Success(pet);
     }
 }

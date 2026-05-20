@@ -12,15 +12,15 @@ namespace PetFamily.Domain.Shared.ValueObjects
             Value = value;
         }
 
-        public static Result<Weight> Create(decimal value)
+        public static Result<Weight, Error> Create(decimal value)
         {
             if (value <= 0)
-                return Result.Failure<Weight>("Weight must be greater than zero");
+                return Error.Validation("weight.invalid", "Weight must be greater than zero");
 
             if (value > 500)
-                return Result.Failure<Weight>("Weight is out of valid range");
+                return Error.Validation("weight.out_of_range", "Weight is out of valid range");
 
-            return Result.Success(new Weight(decimal.Round(value, 2)));
+            return new Weight(decimal.Round(value, 2));
         }
 
         protected override IEnumerable<IComparable> GetComparableEqualityComponents()
