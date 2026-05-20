@@ -35,15 +35,12 @@ public sealed class CreateVolunteerHandler
             return phoneResult.Error;
 
         var requisites = new RequisiteDetails();
-        if (command.Requisites is not null)
+        foreach (var dto in command.Requisites)
         {
-            foreach (var dto in command.Requisites)
-            {
-                var requisiteResult = Requisites.Create(dto.Name, dto.Description);
-                if (requisiteResult.IsFailure)
-                    return requisiteResult.Error;
-                requisites.RequisitesList.Add(requisiteResult.Value);
-            }
+            var requisiteResult = Requisites.Create(dto.Name, dto.Description);
+            if (requisiteResult.IsFailure)
+                return requisiteResult.Error;
+            requisites.RequisitesList.Add(requisiteResult.Value);
         }
 
         var volunteerResult = Volunteer.Create(
@@ -60,15 +57,12 @@ public sealed class CreateVolunteerHandler
 
         var volunteer = volunteerResult.Value;
 
-        if (command.SocialNetworks is not null)
+        foreach (var dto in command.SocialNetworks)
         {
-            foreach (var dto in command.SocialNetworks)
-            {
-                var snResult = SocialNetwork.Create(dto.Link, dto.Title);
-                if (snResult.IsFailure)
-                    return snResult.Error;
-                volunteer.AddSocialNetwork(snResult.Value);
-            }
+            var snResult = SocialNetwork.Create(dto.Link, dto.Title);
+            if (snResult.IsFailure)
+                return snResult.Error;
+            volunteer.AddSocialNetwork(snResult.Value);
         }
 
         var id = await _repository.Add(volunteer, cancellationToken);

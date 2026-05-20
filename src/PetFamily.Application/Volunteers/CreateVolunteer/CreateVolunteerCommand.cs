@@ -1,3 +1,5 @@
+using PetFamily.Contracts.Volunteers;
+
 namespace PetFamily.Application.Volunteers.CreateVolunteer;
 
 public sealed record CreateVolunteerCommand(
@@ -6,9 +8,16 @@ public sealed record CreateVolunteerCommand(
     string Description,
     string Phone,
     int ExperienceInYears,
-    IReadOnlyList<RequisiteDto>? Requisites,
-    IReadOnlyList<SocialNetworkDto>? SocialNetworks);
-
-public sealed record RequisiteDto(string Name, string Description);
-
-public sealed record SocialNetworkDto(string Link, string Title);
+    IEnumerable<RequisiteDto> Requisites,
+    IEnumerable<SocialNetworkDto> SocialNetworks)
+{
+    public static CreateVolunteerCommand FromRequest(CreateVolunteerRequest request) =>
+        new(
+            request.FullName,
+            request.Email,
+            request.Description,
+            request.Phone,
+            request.ExperienceInYears,
+            request.Requisites,
+            request.SocialNetworks);
+}
