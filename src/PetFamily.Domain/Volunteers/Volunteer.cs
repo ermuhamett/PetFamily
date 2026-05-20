@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+using CSharpFunctionalExtensions;
 using PetFamily.Domain.Pets;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ValueObjects;
@@ -11,10 +11,10 @@ public sealed class Volunteer : Entity<VolunteerId>
     public IReadOnlyList<Pet> Pets => _pets;
     public SocialNetworkDetails SocialNetworkDetails { get; private set; } = new();
 
-    public string FullName { get; private set; } = default!;
-    public string Email { get; private set; } = default!;
-    public string Description { get; private set; } = default!;
-    public string Phone { get; private set; } = default!;
+    public FullName FullName { get; private set; } = default!;
+    public Email Email { get; private set; } = default!;
+    public Description Description { get; private set; } = default!;
+    public PhoneNumber Phone { get; private set; } = default!;
     public int? ExperienceInYears { get; private set; }
     public RequisiteDetails? RequisitesDetails { get; private set; }
 
@@ -23,14 +23,15 @@ public sealed class Volunteer : Entity<VolunteerId>
     public int PetsSeekingHome => _pets.Where(d => d.Status.Value == PetStatus.Status.HomeSeeking).Count();
     public int PetsNeedHelp => _pets.Where(d => d.Status.Value == PetStatus.Status.NeedHelp).Count();
 
+    // for EF Core
     private Volunteer(VolunteerId id) : base(id) { }
 
     private Volunteer(
         VolunteerId id,
-        string fullName,
-        string email,
-        string description,
-        string phone,
+        FullName fullName,
+        Email email,
+        Description description,
+        PhoneNumber phone,
         int experienceInYears,
         RequisiteDetails requisiteDetails) : base(id)
     {
@@ -59,24 +60,15 @@ public sealed class Volunteer : Entity<VolunteerId>
 
     public static Result<Volunteer, Error> Create(
         VolunteerId volunteerId,
-        string fullName,
-        string email,
-        string description,
-        string phone,
+        FullName fullName,
+        Email email,
+        Description description,
+        PhoneNumber phone,
         int experienceInYears,
         RequisiteDetails requisiteDetails)
     {
-        if (string.IsNullOrWhiteSpace(fullName))
-            return Error.Validation("volunteer.full_name.empty", $"{nameof(fullName)} is not be empty");
-
-        if (string.IsNullOrWhiteSpace(email))
-            return Error.Validation("volunteer.email.empty", $"{nameof(email)} is not be empty");
-
-        if (string.IsNullOrWhiteSpace(description))
-            return Error.Validation("volunteer.description.empty", $"{nameof(description)} is not be empty");
-
-        if (string.IsNullOrWhiteSpace(phone))
-            return Error.Validation("volunteer.phone.empty", $"{nameof(phone)} is not be empty");
+        if (experienceInYears < 0)
+            return Error.Validation("volunteer.experience.negative", "Experience cannot be negative");
 
         return new Volunteer(
             volunteerId,
