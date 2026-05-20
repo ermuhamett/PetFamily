@@ -18,6 +18,22 @@ public sealed class CreateVolunteerHandler
         CreateVolunteerCommand command,
         CancellationToken cancellationToken = default)
     {
+        var fullNameResult = FullName.Create(command.FullName);
+        if (fullNameResult.IsFailure)
+            return fullNameResult.Error;
+
+        var emailResult = Email.Create(command.Email);
+        if (emailResult.IsFailure)
+            return emailResult.Error;
+
+        var descriptionResult = Description.Create(command.Description);
+        if (descriptionResult.IsFailure)
+            return descriptionResult.Error;
+
+        var phoneResult = PhoneNumber.Create(command.Phone);
+        if (phoneResult.IsFailure)
+            return phoneResult.Error;
+
         var requisites = new RequisiteDetails();
         if (command.Requisites is not null)
         {
@@ -32,10 +48,10 @@ public sealed class CreateVolunteerHandler
 
         var volunteerResult = Volunteer.Create(
             VolunteerId.NewId(),
-            command.FullName,
-            command.Email,
-            command.Description,
-            command.Phone,
+            fullNameResult.Value,
+            emailResult.Value,
+            descriptionResult.Value,
+            phoneResult.Value,
             command.ExperienceInYears,
             requisites);
 
