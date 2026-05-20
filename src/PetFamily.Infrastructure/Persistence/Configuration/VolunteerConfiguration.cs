@@ -49,7 +49,7 @@ public sealed class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
             .HasMaxLength(Description.MAX_LENGTH);
 
         builder.Property(p => p.ExperienceInYears)
-            .IsRequired(false)
+            .IsRequired()
             .HasColumnName("experience_in_years");
 
         builder.HasMany(p => p.Pets)
