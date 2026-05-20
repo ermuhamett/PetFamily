@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PetFamily.Domain.Pets;
 using PetFamily.Domain.Shared;
@@ -20,7 +20,7 @@ public sealed class PetConfiguration : IEntityTypeConfiguration<Pet>
         builder.Property(p => p.Name)
             .IsRequired()
             .HasColumnName("name")
-            .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
+            .HasMaxLength(Pet.NAME_MAX_LENGTH);
 
         builder.ComplexProperty(p => p.Breed, r =>
         {
@@ -40,14 +40,17 @@ public sealed class PetConfiguration : IEntityTypeConfiguration<Pet>
         });
 
         builder.Property(p => p.Description)
+            .HasConversion(
+                d => d.Value,
+                value => Description.Create(value).Value)
             .IsRequired()
             .HasColumnName("description")
-            .HasMaxLength(Constants.MAX_MEDIUM_TEXT_LENGTH);
+            .HasMaxLength(Description.MAX_LENGTH);
 
         builder.Property(p => p.Color)
             .IsRequired()
             .HasColumnName("color")
-            .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
+            .HasMaxLength(Pet.COLOR_MAX_LENGTH);
 
         builder.Property(p => p.Weight)
             .HasConversion(
@@ -66,9 +69,12 @@ public sealed class PetConfiguration : IEntityTypeConfiguration<Pet>
             .HasPrecision(10, 2);
 
         builder.Property(p => p.HealthInformation)
+            .HasConversion(
+                d => d.Value,
+                value => Description.Create(value).Value)
             .IsRequired()
             .HasColumnName("health_information")
-            .HasMaxLength(Constants.MAX_MEDIUM_TEXT_LENGTH);
+            .HasMaxLength(Description.MAX_LENGTH);
 
         builder.ComplexProperty(p => p.Address, a =>
         {
@@ -92,9 +98,12 @@ public sealed class PetConfiguration : IEntityTypeConfiguration<Pet>
         });
 
         builder.Property(p => p.Phone)
+            .HasConversion(
+                p => p.Value,
+                value => PhoneNumber.Create(value).Value)
             .IsRequired()
             .HasColumnName("phone")
-            .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
+            .HasMaxLength(PhoneNumber.MAX_LENGTH);
 
         builder.Property(p => p.IsCastrated)
             .IsRequired()

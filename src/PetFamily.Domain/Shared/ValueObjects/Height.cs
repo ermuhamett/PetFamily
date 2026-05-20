@@ -2,6 +2,8 @@
 
 namespace PetFamily.Domain.Shared.ValueObjects;
 
+
+
 public sealed class Height : ComparableValueObject
 {
     public decimal Value { get; }
@@ -11,15 +13,15 @@ public sealed class Height : ComparableValueObject
     {
         Value = value;  
     }
-    public static Result<Height> Create(decimal value)
+    public static Result<Height, Error> Create(decimal value)
     {
         if (value <= 0)
-            return Result.Failure<Height>("Height must be greater than zero");
+            return Error.Validation("height.invalid", "Height must be greater than zero");
 
         if (value > 300)
-            return Result.Failure<Height>("Height is out of valid range");
+            return Error.Validation("height.out_of_range", "Height is out of valid range");
 
-        return Result.Success(new Height(decimal.Round(value, 2)));
+        return new Height(decimal.Round(value, 2));
     }
 
     protected override IEnumerable<IComparable> GetComparableEqualityComponents()

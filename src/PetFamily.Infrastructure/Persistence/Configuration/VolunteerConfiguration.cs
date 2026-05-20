@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PetFamily.Domain.Shared;
+using PetFamily.Domain.Shared.ValueObjects;
 using PetFamily.Domain.Volunteers;
 
 namespace PetFamily.Infrastructure.Persistence.Configuration;
@@ -16,24 +17,36 @@ public sealed class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
                                 value => VolunteerId.Create(value));
 
         builder.Property(p => p.FullName)
+            .HasConversion(
+                fn => fn.Value,
+                value => FullName.Create(value).Value)
             .IsRequired()
             .HasColumnName("full_name")
-            .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
+            .HasMaxLength(FullName.MAX_LENGTH);
 
         builder.Property(p => p.Email)
-            .IsRequired(false)
+            .HasConversion(
+                e => e.Value,
+                value => Email.Create(value).Value)
+            .IsRequired()
             .HasColumnName("email")
-            .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
+            .HasMaxLength(Email.MAX_LENGTH);
 
         builder.Property(p => p.Phone)
+            .HasConversion(
+                p => p.Value,
+                value => PhoneNumber.Create(value).Value)
             .IsRequired()
             .HasColumnName("phone")
-            .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
+            .HasMaxLength(PhoneNumber.MAX_LENGTH);
 
         builder.Property(p => p.Description)
-            .IsRequired(false)
+            .HasConversion(
+                d => d.Value,
+                value => Description.Create(value).Value)
+            .IsRequired()
             .HasColumnName("description")
-            .HasMaxLength(Constants.MAX_MEDIUM_TEXT_LENGTH);
+            .HasMaxLength(Description.MAX_LENGTH);
 
         builder.Property(p => p.ExperienceInYears)
             .IsRequired(false)
