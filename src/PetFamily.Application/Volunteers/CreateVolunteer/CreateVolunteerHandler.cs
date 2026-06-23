@@ -1,4 +1,6 @@
 using CSharpFunctionalExtensions;
+using FluentValidation;
+using PetFamily.Application.Validation;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ValueObjects;
 using PetFamily.Domain.Volunteers;
@@ -8,16 +10,24 @@ namespace PetFamily.Application.Volunteers.CreateVolunteer;
 public sealed class CreateVolunteerHandler
 {
     private readonly IVolunteersRepository _repository;
+    private readonly IValidator<CreateVolunteerCommand> _validator;
 
-    public CreateVolunteerHandler(IVolunteersRepository repository)
+    public CreateVolunteerHandler(
+        IVolunteersRepository repository,
+        IValidator<CreateVolunteerCommand> validator)
     {
         _repository = repository;
+        _validator = validator;
     }
 
     public async Task<Result<Guid, Error>> Handle(
         CreateVolunteerCommand command,
         CancellationToken cancellationToken = default)
     {
+        var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
+            return validationResult.ToError();
+
         var fullNameResult = FullName.Create(command.FullName);
         if (fullNameResult.IsFailure)
             return fullNameResult.Error;
