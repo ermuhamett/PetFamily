@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PetFamily.API.Extensions;
+using PetFamily.API.Response;
 using PetFamily.Application.Volunteers.CreateVolunteer;
 using PetFamily.Contracts.Volunteers;
 
@@ -10,7 +11,7 @@ namespace PetFamily.API.Controllers;
 public sealed class VolunteersController : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult<Guid>> Create(
+    public async Task<ActionResult> Create(
         [FromServices] CreateVolunteerHandler handler,
         [FromBody] CreateVolunteerRequest request,
         CancellationToken cancellationToken)
@@ -18,8 +19,8 @@ public sealed class VolunteersController : ControllerBase
         var command = CreateVolunteerCommand.FromRequest(request);
         var result = await handler.Handle(command, cancellationToken);
         if (result.IsFailure)
-            return result.Error.ToActionResult();
+            return result.Error.ToResponse();
 
-        return Ok(result.Value);
+        return Ok(Envelope.Ok(result.Value));
     }
 }
