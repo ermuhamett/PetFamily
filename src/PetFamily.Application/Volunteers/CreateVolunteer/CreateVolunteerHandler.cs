@@ -20,36 +20,36 @@ public sealed class CreateVolunteerHandler
         _validator = validator;
     }
 
-    public async Task<Result<Guid, Error>> Handle(
+    public async Task<Result<Guid, ErrorList>> Handle(
         CreateVolunteerCommand command,
         CancellationToken cancellationToken = default)
     {
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (!validationResult.IsValid)
-            return validationResult.ToError();
+            return validationResult.ToErrors();
 
         var fullNameResult = FullName.Create(command.FullName);
         if (fullNameResult.IsFailure)
-            return fullNameResult.Error;
+            return fullNameResult.Error.ToErrors();
 
         var emailResult = Email.Create(command.Email);
         if (emailResult.IsFailure)
-            return emailResult.Error;
+            return emailResult.Error.ToErrors();
 
         var descriptionResult = Description.Create(command.Description);
         if (descriptionResult.IsFailure)
-            return descriptionResult.Error;
+            return descriptionResult.Error.ToErrors();
 
         var phoneResult = PhoneNumber.Create(command.Phone);
         if (phoneResult.IsFailure)
-            return phoneResult.Error;
+            return phoneResult.Error.ToErrors();
 
         var requisites = new RequisiteDetails();
         foreach (var dto in command.Requisites)
         {
             var requisiteResult = Requisites.Create(dto.Name, dto.Description);
             if (requisiteResult.IsFailure)
-                return requisiteResult.Error;
+                return requisiteResult.Error.ToErrors();
             requisites.RequisitesList.Add(requisiteResult.Value);
         }
 
@@ -63,7 +63,7 @@ public sealed class CreateVolunteerHandler
             requisites);
 
         if (volunteerResult.IsFailure)
-            return volunteerResult.Error;
+            return volunteerResult.Error.ToErrors();
 
         var volunteer = volunteerResult.Value;
 
@@ -71,7 +71,7 @@ public sealed class CreateVolunteerHandler
         {
             var snResult = SocialNetwork.Create(dto.Link, dto.Title);
             if (snResult.IsFailure)
-                return snResult.Error;
+                return snResult.Error.ToErrors();
             volunteer.AddSocialNetwork(snResult.Value);
         }
 

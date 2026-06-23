@@ -6,18 +6,22 @@ namespace PetFamily.Application.Validation;
 public static class ValidationExtensions
 {
     /// <summary>
-    /// Converts the first FluentValidation failure into a domain <see cref="Error"/>.
+    /// Converts every FluentValidation failure into a domain <see cref="Error"/>.
     /// Messages produced by <see cref="CustomValidators"/> are serialized errors and are
     /// deserialized back; any other message is wrapped as a generic validation error.
+    /// The failing property name is attached as <see cref="Error.InvalidField"/>.
     /// </summary>
-    public static Error ToError(this ValidationResult validationResult)
+    public static ErrorList ToErrors(this ValidationResult validationResult)
     {
-        var failure = validationResult.Errors.First();
-        var message = failure.ErrorMessage;
+        var errors = validationResult.Errors.Select(failure =>
+        {
+            var error = failure.ErrorMessage.Contains(Error.Separator)
+                ? Error.Deserialize(failure.ErrorMessage)
+                : Error.Validation(failure.PropertyName, failure.ErrorMessage);
 
-        if (message.Contains(Error.Separator))
-            return Error.Deserialize(message);
+            return error.WithInvalidField(failure.PropertyName);
+        });
 
-        return Error.Validation(failure.PropertyName, message);
+        return new ErrorList(errors);
     }
 }
