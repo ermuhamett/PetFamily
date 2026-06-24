@@ -15,7 +15,7 @@ public sealed class Volunteer : Entity<VolunteerId>
     public Email Email { get; private set; } = default!;
     public Description Description { get; private set; } = default!;
     public PhoneNumber Phone { get; private set; } = default!;
-    public int? ExperienceInYears { get; private set; }
+    public int ExperienceInYears { get; private set; }
     public RequisiteDetails? RequisitesDetails { get; private set; }
 
     public int NumberOfPets => _pets.Count;

@@ -8,11 +8,14 @@
 
   <ItemGroup>
     <PackageReference Include="CSharpFunctionalExtensions" Version="3.7.0" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PetFamily.Domain\PetFamily.Domain.csproj" />
+    <ProjectReference Include="..\PetFamily.Contracts\PetFamily.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

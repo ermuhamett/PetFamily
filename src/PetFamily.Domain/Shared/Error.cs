@@ -4,19 +4,21 @@ public sealed record Error
 {
     public const string Separator = "||";
 
-    private Error(string code, string message, ErrorType type)
+    private Error(string code, string message, ErrorType type, string? invalidField = null)
     {
         Code = code;
         Message = message;
         Type = type;
+        InvalidField = invalidField;
     }
 
     public string Code { get; }
     public string Message { get; }
     public ErrorType Type { get; }
+    public string? InvalidField { get; }
 
-    public static Error Validation(string code, string message) =>
-        new(code, message, ErrorType.Validation);
+    public static Error Validation(string code, string message, string? invalidField = null) =>
+        new(code, message, ErrorType.Validation, invalidField);
 
     public static Error NotFound(string code, string message) =>
         new(code, message, ErrorType.NotFound);
@@ -26,6 +28,11 @@ public sealed record Error
 
     public static Error Conflict(string code, string message) =>
         new(code, message, ErrorType.Conflict);
+
+    public Error WithInvalidField(string? invalidField) =>
+        new(Code, Message, Type, invalidField);
+
+    public ErrorList ToErrors() => new([this]);
 
     public string Serialize() => string.Join(Separator, Code, Message, Type);
 
